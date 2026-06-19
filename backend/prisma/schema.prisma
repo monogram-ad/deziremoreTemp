@@ -1,0 +1,199 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  phone        String?    @unique
+  passwordHash String
+
+  cart         Cart?
+  wishlist     Wishlist?
+  orders       Order[]
+
+  role         UserRole   @default(CUSTOMER)
+
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+model Category {
+  id          String      @id @default(cuid())
+  name        String
+  slug        String      @unique
+
+  // False when the asset-sync no longer finds this folder under assets/.
+  // Soft-deactivated instead of deleted so historical orders stay intact.
+  isActive    Boolean     @default(true)
+
+  products    Product[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([isActive])
+}
+
+model Product {
+  id            String          @id @default(cuid())
+
+  name          String
+  slug          String          @unique
+
+  description   String
+
+  price         Float
+  mrp           Float?
+
+  fabric        String?
+  color         String?
+  sizes         String[]        @default([])
+
+  // Image filenames discovered in the product's asset folder, in display
+  // order (1.jpg, 2.jpg, ...). Served from /assets/<assetPath>/<image>.
+  images        String[]        @default([])
+
+  categoryId    String
+  category      Category        @relation(fields: [categoryId], references: [id])
+
+  assetPath     String
+
+  // False when the asset-sync no longer finds this folder under assets/.
+  // Soft-deactivated instead of deleted so historical orders/cart/wishlist
+  // rows referencing this product never dangle on a hard FK delete.
+  isActive      Boolean         @default(true)
+
+  // Hash of (desc.txt contents + sorted image filenames) used by the
+  // asset-sync to skip re-writing products that haven't actually changed.
+  contentHash   String?
+  lastSyncedAt  DateTime?
+
+  orderItems    OrderItem[]
+  cartItems     CartItem[]
+  wishlistItems WishlistItem[]
+
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@index([categoryId])
+  @@index([isActive])
+}
+
+model Cart {
+  id          String      @id @default(cuid())
+
+  userId      String      @unique
+  user        User        @relation(fields: [userId], references: [id])
+
+  items       CartItem[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model CartItem {
+  id          String      @id @default(cuid())
+
+  cartId      String
+  cart        Cart        @relation(fields: [cartId], references: [id])
+
+  productId   String
+  product     Product     @relation(fields: [productId], references: [id])
+
+  quantity    Int         @default(1)
+
+  createdAt   DateTime    @default(now())
+
+  @@unique([cartId, productId])
+}
+
+model Wishlist {
+  id          String          @id @default(cuid())
+
+  userId      String          @unique
+  user        User            @relation(fields: [userId], references: [id])
+
+  items       WishlistItem[]
+
+  createdAt   DateTime        @default(now())
+}
+
+model WishlistItem {
+  id          String          @id @default(cuid())
+
+  wishlistId  String
+  wishlist    Wishlist        @relation(fields: [wishlistId], references: [id])
+
+  productId   String
+  product     Product         @relation(fields: [productId], references: [id])
+
+  createdAt   DateTime        @default(now())
+
+  @@unique([wishlistId, productId])
+}
+
+model Order {
+  id            String        @id @default(cuid())
+
+  userId        String
+  user          User          @relation(fields: [userId], references: [id])
+
+  totalAmount   Float
+
+  customerName  String
+  customerPhone String
+
+  address       String
+
+  status        OrderStatus   @default(PENDING)
+
+  items         OrderItem[]
+
+  createdAt     DateTime      @default(now())
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id          String      @id @default(cuid())
+
+  orderId     String
+  order       Order       @relation(fields: [orderId], references: [id])
+
+  productId   String
+  product     Product     @relation(fields: [productId], references: [id])
+
+  quantity    Int
+  price       Float
+}
+
+model Lead {
+  id          String      @id @default(cuid())
+
+  email       String?
+  phone       String?
+
+  createdAt   DateTime    @default(now())
+}
+
+enum UserRole {
+  ADMIN
+  CUSTOMER
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
