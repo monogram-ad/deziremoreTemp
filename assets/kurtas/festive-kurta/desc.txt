@@ -1,0 +1,9 @@
+Name: Festive Kurta
+Price: 1299
+MRP: 1799
+Category: Kurtas
+Color: Yellow
+Fabric: Cotton
+Sizes: S, M, L, XL, XXL
+
+A comfortable festive kurta in breathable cotton, finished with delicate block-print detailing — perfect for daytime celebrations.

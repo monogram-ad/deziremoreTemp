@@ -1,0 +1,9 @@
+Name: Royal Silk Saree
+Price: 3499
+MRP: 4999
+Category: Sarees
+Color: Maroon
+Fabric: Silk
+Sizes: Free Size
+
+Premium handcrafted silk saree suitable for weddings and festive occasions. Woven with a rich zari border and finished with a matching blouse piece.

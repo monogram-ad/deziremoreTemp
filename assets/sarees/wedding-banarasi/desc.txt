@@ -1,0 +1,9 @@
+Name: Wedding Banarasi
+Price: 7999
+MRP: 10999
+Category: Sarees
+Color: Gold
+Fabric: Banarasi Silk
+Sizes: Free Size
+
+A stunning banarasi silk saree for weddings, featuring traditional motifs woven throughout with real zari thread.

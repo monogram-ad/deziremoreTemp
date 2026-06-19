@@ -1,0 +1,9 @@
+Name: Bridal Red Lehenga
+Price: 15999
+MRP: 21999
+Category: Lehengas
+Color: Red
+Fabric: Velvet
+Sizes: S, M, L, XL
+
+A heavily embroidered bridal lehenga in deep red velvet, with hand-stitched sequin and thread work across the skirt and blouse.

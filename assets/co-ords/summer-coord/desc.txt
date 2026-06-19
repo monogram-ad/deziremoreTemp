@@ -1,0 +1,9 @@
+Name: Summer Co-ord
+Price: 1899
+MRP: 2499
+Category: Co-ords
+Color: Sky Blue
+Fabric: Linen Blend
+Sizes: S, M, L
+
+A breezy two-piece co-ord set in a linen blend, designed for warm-weather outings and casual day events.
