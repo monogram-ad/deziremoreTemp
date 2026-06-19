@@ -1,0 +1,43 @@
+assets/
+│
+├── sarees/
+│   ├── royal-silk-saree/
+│   │   ├── desc.txt
+│   │   ├── 1.jpg
+│   │   ├── 2.jpg
+│   │   └── 3.jpg
+│   │
+│   ├── wedding-banarasi/
+│   │   ├── desc.txt
+│   │   ├── 1.jpg
+│   │   └── 2.jpg
+│
+├── lehengas/
+│   ├── bridal-red-lehenga/
+│   │   ├── desc.txt
+│   │   ├── 1.jpg
+│   │   ├── 2.jpg
+│   │   └── 3.jpg
+│
+├── kurtas/
+│   └── festive-kurta/
+│       ├── desc.txt
+│       ├── 1.jpg
+│       └── 2.jpg
+│
+└── co-ords/
+    └── summer-coord/
+        ├── desc.txt
+        ├── 1.jpg
+        └── 2.jpg
+		
+desc.txt------------------------
+Name: Royal Silk Saree
+Price: 3499
+MRP: 4999
+Category: Sarees
+Color: Maroon
+Fabric: Silk
+Sizes: Free Size
+
+Premium handcrafted silk saree suitable for weddings and festive occasions.
