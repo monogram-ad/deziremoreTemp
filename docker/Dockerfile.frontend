@@ -1,0 +1,28 @@
+# --- deps ---
+FROM node:20-bookworm-slim AS deps
+WORKDIR /app
+COPY frontend/package*.json ./
+RUN npm ci
+
+# --- build ---
+FROM node:20-bookworm-slim AS build
+WORKDIR /app
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+COPY --from=deps /app/node_modules ./node_modules
+COPY frontend/ ./
+RUN npm run build
+
+# --- runtime ---
+# next.config.js sets output: "standalone", which produces a minimal
+# self-contained server in .next/standalone — no node_modules copy needed.
+FROM node:20-bookworm-slim AS runtime
+WORKDIR /app
+ENV NODE_ENV=production
+
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/.next/static ./.next/static
+COPY --from=build /app/public ./public
+
+EXPOSE 3000
+CMD ["node", "server.js"]

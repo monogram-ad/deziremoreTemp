@@ -1,0 +1,39 @@
+# --- deps ---
+FROM node:20-bookworm-slim AS deps
+WORKDIR /app
+COPY backend/package*.json ./
+RUN npm ci
+
+# --- build ---
+FROM node:20-bookworm-slim AS build
+WORKDIR /app
+COPY --from=deps /app/node_modules ./node_modules
+COPY backend/ ./
+RUN npx prisma generate
+RUN npm run build
+
+# --- runtime ---
+FROM node:20-bookworm-slim AS runtime
+WORKDIR /app
+ENV NODE_ENV=production
+# The default ASSETS_DIR (computed relative to this file's own location)
+# assumes the local dev layout of <repoRoot>/{backend,frontend,assets}.
+# That assumption doesn't hold inside this image, so ASSETS_DIR is set
+# explicitly here — see docker-compose.yml, which also mounts the
+# host's assets/ folder at this same path so new product folders show
+# up without rebuilding the image.
+ENV ASSETS_DIR=/app/assets
+
+COPY backend/package*.json ./
+RUN npm ci
+COPY --from=build /app/dist ./dist
+COPY --from=build /app/node_modules/.prisma ./node_modules/.prisma
+COPY backend/prisma ./prisma
+
+EXPOSE 5000
+# Applies any pending migrations before starting the server. Requires
+# at least one migration to already exist in backend/prisma/migrations
+# — run `npx prisma migrate dev --name init` locally against a real
+# Postgres once to generate it; this repo doesn't ship one because it
+# was never run (see audit report, Prisma schema issues section).
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/server.js"]
